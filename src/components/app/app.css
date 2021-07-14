@@ -1,0 +1,11 @@
+.toggle__button {
+    width: 200px;
+    height: 50px;
+    margin-bottom: 20px;
+    background-color: #777c98;
+    transition: .2s all;
+}
+.toggle__button:hover {
+    background-color: #363a52;
+    color: #fff;
+}

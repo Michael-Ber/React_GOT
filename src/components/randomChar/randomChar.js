@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 // import './randomChar.css';
 import styled from 'styled-components';
 import GotService from '../../services/gotService';
+import Spinner from '../spinner';
+import ErrorMessage from '../errorMessage';
 
 const RandomBlock = styled.div`
     background-color: #fff;
@@ -11,6 +13,16 @@ const RandomBlock = styled.div`
     h4 {
         margin-bottom: 20px;
         text-align: center;
+    }
+    img {
+        display: block;
+        width: 35%;
+        margin: 0 auto;
+    }
+    span {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
     }
 `;
 const UlBlock = styled.ul`
@@ -37,45 +49,77 @@ const LiItem = styled.li`
 export default class RandomChar extends Component {
     constructor() {
         super();
-        // this.updateChar();
+        this.updateChar();
     }
     gotService = new GotService();
     state = {
-        char: {}
+        char: {},
+        loading: true,
+        error: false
     };
     onCharLoaded = (char) => {
-        this.setState({char});
+        this.setState({char, loading: false});
     }
     updateChar() {
         const id = Math.floor(Math.random()*140 + 25);
         this.gotService.getCharacter(id)
             .then(this.onCharLoaded)
+            .catch(this.errorMessage)
     }
-    
+    checkIfEmpty(prop, loading) {
+        if(loading) {
+            return <Spinner></Spinner>
+        }
+        if(prop === "") {
+            return 'there is no data :(';
+        }
+        return prop;
+    }
+    errorMessage = (error) => {
+        this.setState({
+            loading: false,
+            error: true
+        })
+    }
     render() {
-        const {char: {name, gender, born, died, culture}} = this.state;
+        const {char, loading, error} = this.state;
+
+        const errorMessage = error ? <ErrorMessage></ErrorMessage>: null;
+        const content = !(error) ? <View char={char}
+        loading={loading}
+        checkIfEmpty={this.checkIfEmpty}></View> : null;
         return (
             <RandomBlock>
-                <h4>Random Character: {name}</h4>
-                <UlBlock>
-                    <LiItem>
-                        <span className="term">Gender </span>
-                        <span>{gender}</span>
-                    </LiItem>
-                    <LiItem>
-                        <span className="term">Born </span>
-                        <span>{born}</span>
-                    </LiItem>
-                    <LiItem>
-                        <span className="term">Died </span>
-                        <span>{died}</span>
-                    </LiItem>
-                    <LiItem>
-                        <span className="term">Culture </span>
-                        <span>{culture}</span>
-                    </LiItem>
-                </UlBlock>
+                {errorMessage}
+                {content}
             </RandomBlock>
         );
     }
+}
+
+const View = ({char, loading, checkIfEmpty}) => {
+    const {name, gender, born, died, culture} = char;
+    return (
+        <>
+            <h4>Random Character: {checkIfEmpty(name, loading)}</h4>
+            <UlBlock>
+                <LiItem>
+                    <span className="term">Gender </span>
+                    <span>{checkIfEmpty(gender, loading)}</span>
+                </LiItem>
+                <LiItem>
+                    <span className="term">Born </span>
+                    <span>{checkIfEmpty(born, loading)}</span>
+                </LiItem>
+                <LiItem>
+                    <span className="term">Died </span>
+                    <span>{checkIfEmpty(died, loading)}</span>
+                </LiItem>
+                <LiItem>
+                    <span className="term">Culture </span>
+                    <span>{checkIfEmpty(culture, loading)}</span>
+                </LiItem>
+            </UlBlock>
+        </>
+    )
 }
