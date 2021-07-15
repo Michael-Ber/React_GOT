@@ -47,20 +47,24 @@ const LiItem = styled.li`
 
 `;
 export default class RandomChar extends Component {
-    constructor() {
-        super();
-        this.updateChar();
-    }
+
     gotService = new GotService();
     state = {
         char: {},
         loading: true,
         error: false
     };
+    componentDidMount() {
+        this.updateChar();
+        this.timerId = setInterval(this.updateChar, 2000);
+    }
+    componentWillUnmount() {
+        clearInterval(this.timerId);
+    }
     onCharLoaded = (char) => {
         this.setState({char, loading: false});
     }
-    updateChar() {
+    updateChar = () => {
         const id = Math.floor(Math.random()*140 + 25);
         this.gotService.getCharacter(id)
             .then(this.onCharLoaded)

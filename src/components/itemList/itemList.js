@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 // import './itemList.css';
 import styled from 'styled-components';
+import '../../services/gotService';
+import GotService from '../../services/gotService';
 
 const UlBlock = styled.ul`
     display: flex;
@@ -22,19 +24,24 @@ const LiItem = styled.li`
     }
 `;
 export default class ItemList extends Component {
-
+    gotService = new GotService();
+    state = {
+        chars: null
+    };
+    componentDidMount() {
+        this.gotService.getAllCharacters()
+            .then((chars) => {this.setState({chars})})
+    }
     render() {
+        if(!this.state.chars) {
+            return null
+        }
+        const persons = this.state.chars.map((item, i) => {
+            return <LiItem key={i}>{item.name}</LiItem>
+        })
         return (
             <UlBlock >
-                <LiItem >
-                    John Snow
-                </LiItem>
-                <LiItem >
-                    Brandon Stark
-                </LiItem>
-                <LiItem >
-                    Geremy
-                </LiItem>
+                {persons}
             </UlBlock>
         );
     }

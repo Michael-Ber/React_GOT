@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 // import './charDetails.css';
 import styled from 'styled-components';
+import GotService from '../../services/gotService';
 
 const DetailsBlock = styled.div`
     background-color: #fff;
@@ -36,8 +37,20 @@ const LiItem = styled.li`
 `;
 
 export default class CharDetails extends Component {
-
+    gotService = new GotService();
+    state = {
+        char: null
+    }
+    componentDidMount() {
+        this.gotService.getCharacter(this.props.selectedChar())
+            .then((char) => this.setState({char}))
+    }
     render() {
+        if(!this.state.char) {
+            return (
+                <span>You should choose a person</span>
+            )
+        }
         return (
             <DetailsBlock >
                 <h4>John Snow</h4>

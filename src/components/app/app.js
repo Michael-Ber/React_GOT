@@ -4,24 +4,35 @@ import Header from '../header';
 import RandomChar from '../randomChar';
 import ItemList from '../itemList';
 import CharDetails from '../charDetails';
+import ErrorMessage from '../errorMessage';
 import '../../services/gotService';
 import './app.css';
 
 
 export default class App extends Component {
     state = {
-        d: true
+        randCharVis: true,
+        error: false,
+        charSelected: null
+    }
+    componentDidCatch() {
+        return (
+            <ErrorMessage></ErrorMessage>
+        )
     }
     onClick = () => {
-        if(this.state.d) {
-            this.setState({d: false})
-        }else {
-            this.setState({d: true})
-        }
+        this.setState((state) => {
+            return {
+                randCharVis: !state.randCharVis
+            }
+        }) 
     }
     
     render() {
-        const randomChar = this.state.d ? <RandomChar></RandomChar>: null;
+        if(this.state.error) {
+            return <ErrorMessage></ErrorMessage>
+        }
+        const randomChar = this.state.randCharVis ? <RandomChar></RandomChar>: null;
         return (
             <> 
                 <Container>
@@ -33,7 +44,7 @@ export default class App extends Component {
                             {randomChar}
                             <button 
                                 className={'toggle__button'}
-                                onClick={this.onClick}>toggleRandomChar</button>
+                                onClick={this.onClick}>Toggle random character</button>
                         </Col>
                     </Row>
                     <Row>
