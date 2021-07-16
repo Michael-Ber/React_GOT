@@ -33,15 +33,29 @@ export default class GotService {
         const res = await this.getResource(`/books/${id}`)
         return this._transformBook(res);
     }
-    _transformCharacter(char) {
-        return {
-            name: char.name,
-            gender: char.gender,
-            born: char.born,
-            died: char.died,
-            culture: char.culture
+    _checkEmpty(item) {
+        if(item !== '') {
+            return item
+        }else {
+            return 'no data :('
         }
     }
+    _extractId = (item) => {
+        const reg = /\/([0-9]*)$/;
+        return item.url.match(reg)[1];
+    }
+    _transformCharacter = (char) =>
+     {
+        return {
+            id: this._extractId(char),
+            name: this._checkEmpty(char.name),
+            gender: this._checkEmpty(char.gender),
+            born: this._checkEmpty(char.born),
+            died: this._checkEmpty(char.died),
+            culture: this._checkEmpty(char.culture)
+        }
+    }
+    
     _transformHouse(house) {
         return {
             name: house.name,
@@ -54,6 +68,7 @@ export default class GotService {
     }
     _transformBook(book) {
         return {
+            
             name: book.name,
             numberOfPages: book.numberOfPages,
             publisher: book.publisher,

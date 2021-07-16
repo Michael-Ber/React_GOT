@@ -3,6 +3,8 @@ import React, {Component} from 'react';
 import styled from 'styled-components';
 import '../../services/gotService';
 import GotService from '../../services/gotService';
+import Spinner from '../spinner';
+import ErrorMessage from '../errorMessage';
 
 const UlBlock = styled.ul`
     display: flex;
@@ -26,18 +28,35 @@ const LiItem = styled.li`
 export default class ItemList extends Component {
     gotService = new GotService();
     state = {
-        chars: null
+        chars: null, 
+        pageNum: 16,
+        pageSize: 10,
+        error: false
     };
+    
     componentDidMount() {
         this.gotService.getAllCharacters()
-            .then((chars) => {this.setState({chars})})
+            .then((chars) => {
+                return this.setState({chars})
+            })
+    }
+    componentDidCatch() {
+        this.setState({error: true})
     }
     render() {
-        if(!this.state.chars) {
-            return null
+        if(this.state.error) {
+            return <ErrorMessage></ErrorMessage>
         }
-        const persons = this.state.chars.map((item, i) => {
-            return <LiItem key={i}>{item.name}</LiItem>
+        if(!this.state.chars) {
+            return (
+                <Spinner></Spinner>
+            )
+        }
+        const {selectChar} = this.props;
+        const persons = this.state.chars.map(item => {
+            return <LiItem 
+                        key={item.id}
+                        onClick={() => selectChar(item.id)}>{item.name}</LiItem>
         })
         return (
             <UlBlock >

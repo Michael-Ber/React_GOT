@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 // import './charDetails.css';
 import styled from 'styled-components';
 import GotService from '../../services/gotService';
+import Spinner from '../spinner';
 
 const DetailsBlock = styled.div`
     background-color: #fff;
@@ -39,37 +40,64 @@ const LiItem = styled.li`
 export default class CharDetails extends Component {
     gotService = new GotService();
     state = {
-        char: null
+        char: null,
+        loading: false
     }
     componentDidMount() {
-        this.gotService.getCharacter(this.props.selectedChar())
+        this.updateChar();
+    }
+    componentDidUpdate(prevProps) {
+        if(this.props.selectedChar !== prevProps.selectedChar) {
+            this.updateChar();
+        }
+    }
+    updateChar() {
+        const {selectedChar} = this.props;
+        if(!selectedChar) {
+            return
+        }
+        this.setState({loading: true});
+        this.gotService.getCharacter(selectedChar)
             .then((char) => this.setState({char}))
+            .then(() => this.setState({loading: false}))
+    }
+    checkIfEmpty(prop, loading) {
+        if(loading) {
+            return <Spinner></Spinner>
+        }
+        if(prop === "") {
+            return 'there is no data :(';
+        }
+        return prop;
     }
     render() {
         if(!this.state.char) {
             return (
-                <span>You should choose a person</span>
+                <span style={{'color': '#fff'}}>You should choose a person</span>
             )
         }
+        
+        const {name, gender, born, died, culture} = this.state.char;
         return (
+            
             <DetailsBlock >
-                <h4>John Snow</h4>
+                <h4>{name}</h4>
                 <UlBlock className="list-group-flush">
                     <LiItem >
                         <span className="term">Gender</span>
-                        <span>male</span>
+                        <span>{gender}</span>
                     </LiItem>
                     <LiItem>
                         <span className="term">Born</span>
-                        <span>1783</span>
+                        <span>{born}</span>
                     </LiItem>
                     <LiItem>
                         <span className="term">Died</span>
-                        <span>1820</span>
+                        <span>{died}</span>
                     </LiItem>
                     <LiItem>
                         <span className="term">Culture</span>
-                        <span>First</span>
+                        <span>{culture}</span>
                     </LiItem>
                 </UlBlock>
             </DetailsBlock>
