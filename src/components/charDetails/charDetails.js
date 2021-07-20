@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import GotService from '../../services/gotService';
 import Spinner from '../spinner';
 
+
 const DetailsBlock = styled.div`
     background-color: #fff;
     padding: 25px 25px 15px 25px;
@@ -37,6 +38,17 @@ const LiItem = styled.li`
 
 `;
 
+const Field = ({char, field, label}) => {
+    return (
+        <LiItem >
+            <span className="term">{label}</span>
+            <span>{char[field]}</span>
+        </LiItem>
+    )
+}
+
+export { Field };
+
 export default class CharDetails extends Component {
     gotService = new GotService();
     state = {
@@ -45,6 +57,7 @@ export default class CharDetails extends Component {
     }
     componentDidMount() {
         this.updateChar();
+        
     }
     componentDidUpdate(prevProps) {
         if(this.props.selectedChar !== prevProps.selectedChar) {
@@ -57,18 +70,15 @@ export default class CharDetails extends Component {
             return
         }
         this.setState({loading: true});
-        this.gotService.getCharacter(selectedChar)
+        this.gotService.getCharacter(selectedChar, this.state.loading)
             .then((char) => this.setState({char}))
             .then(() => this.setState({loading: false}))
     }
-    checkIfEmpty(prop, loading) {
+    checkIfLoading(char, loading) {
         if(loading) {
             return <Spinner></Spinner>
         }
-        if(prop === "") {
-            return 'there is no data :(';
-        }
-        return prop;
+        return char;
     }
     render() {
         if(!this.state.char) {
@@ -77,28 +87,32 @@ export default class CharDetails extends Component {
             )
         }
         
-        const {name, gender, born, died, culture} = this.state.char;
+        const {name} = this.state.char;
+        const {loading, char} = this.state;
         return (
             
             <DetailsBlock >
-                <h4>{name}</h4>
+                <h4>{this.checkIfLoading(name, loading)}</h4>
                 <UlBlock className="list-group-flush">
-                    <LiItem >
+                    {React.Children.map(this.props.children, (child) => {
+                        return React.cloneElement(child, {char})
+                    })}
+                    {/* <LiItem >
                         <span className="term">Gender</span>
-                        <span>{gender}</span>
+                        <span>{this.checkIfLoading(gender, loading)}</span>
                     </LiItem>
                     <LiItem>
                         <span className="term">Born</span>
-                        <span>{born}</span>
+                        <span>{this.checkIfLoading(born, loading)}</span>
                     </LiItem>
                     <LiItem>
                         <span className="term">Died</span>
-                        <span>{died}</span>
+                        <span>{this.checkIfLoading(died, loading)}</span>
                     </LiItem>
                     <LiItem>
                         <span className="term">Culture</span>
-                        <span>{culture}</span>
-                    </LiItem>
+                        <span>{this.checkIfLoading(culture, loading)}</span>
+                    </LiItem> */}
                 </UlBlock>
             </DetailsBlock>
         );

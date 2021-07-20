@@ -2,38 +2,38 @@ export default class GotService {
     constructor() {
         this._apiBase = 'https://www.anapioficeandfire.com/api';
     }
-    async getResource(url) {
+    getResource = async (url) => {
         const res = await fetch(`${this._apiBase}${url}`);
         if(!res.ok) {
             throw new Error(`Could not fetch ${url}, status: ${res.status}`)
         }
         return await res.json();
     }
-    async getAllCharacters() {
+    getAllCharacters = async () => {
         const res = await this.getResource(`/characters?page=5&pageSize=10`);
         return res.map(this._transformCharacter)
     }
-    async getCharacter(id) {
+    getCharacter = async (id) => {
         const char = await this.getResource(`/characters/${id}`);
         return this._transformCharacter(char);
     }
-    async getAllHouses() {
+    getAllHouses = async () => {
         const res = await this.getResource('/houses?page=5&pageSize=5')
         return res.map(this._transformHouse);
     }
-    async getHouse(id) {
+    getHouse = async (id) => {
         const res = await this.getResource(`/houses/${id}`)
         return this._transformHouse(res); 
     }
-    async getAllBooks() {
+    getAllBooks = async () => {
         const res = await this.getResource('/books?page=1&pageSize=5')
         return res.map(this._transformBook);
     }
-    async getBook(id) {
+    getBook = async (id) => {
         const res = await this.getResource(`/books/${id}`)
         return this._transformBook(res);
     }
-    _checkEmpty(item) {
+    _checkEmpty = (item) => {
         if(item !== '') {
             return item
         }else {
@@ -56,8 +56,9 @@ export default class GotService {
         }
     }
     
-    _transformHouse(house) {
+    _transformHouse = (house) => {
         return {
+            id: this._extractId(house),
             name: house.name,
             region: house.region,
             words: house.words,
@@ -66,9 +67,9 @@ export default class GotService {
             ancestralWeapons: house.ancestralWeapons
         }
     }
-    _transformBook(book) {
+    _transformBook = (book) => {
         return {
-            
+            id: this._extractId(book),
             name: book.name,
             numberOfPages: book.numberOfPages,
             publisher: book.publisher,

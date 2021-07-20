@@ -7,8 +7,12 @@ import CharacterPage from '../characterPage';
 import '../../services/gotService';
 import './app.css';
 
+import GotService from '../../services/gotService';
+import ItemList from '../itemList';
+import CharDetails from '../charDetails';
 
 export default class App extends Component {
+    gotService = new GotService();
     state = {
         randCharVis: true,
         error: false
@@ -44,6 +48,28 @@ export default class App extends Component {
                         </Col>
                     </Row>
                     <CharacterPage></CharacterPage>
+                    <Row>
+                        <Col md='6'>
+                            <ItemList 
+                                selectItem={this.selectChar}
+                                getData={this.gotService.getAllBooks}
+                                renderItem={(item) => item.name}/>
+                        </Col>
+                        <Col md='6'>
+                            <CharDetails selectedChar={this.state.charSelected}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md='6'>
+                            <ItemList 
+                                selectItem={this.selectChar}
+                                getData={this.gotService.getAllHouses}
+                                renderItem={(item) => item.name}/>
+                        </Col>
+                        <Col md='6'>
+                            <CharDetails selectedChar={this.state.charSelected}/>
+                        </Col>
+                    </Row>
                 </Container>
             </>
         );

@@ -27,40 +27,48 @@ const LiItem = styled.li`
 `;
 export default class ItemList extends Component {
     gotService = new GotService();
+
     state = {
-        chars: null, 
-        pageNum: 16,
-        pageSize: 10,
+        items: null, 
         error: false
     };
     
     componentDidMount() {
-        this.gotService.getAllCharacters()
-            .then((chars) => {
-                return this.setState({chars})
+        const {getData} = this.props;
+        getData()
+            .then((items) => {
+                return this.setState({items})
             })
     }
     componentDidCatch() {
         this.setState({error: true})
     }
+    renderItems() {
+        const {items} = this.state;
+        const {selectItem} = this.props;
+        return items.map(item => {
+            const {id} = item;
+            const label = this.props.renderItem(item);
+            return <LiItem 
+                        key={id}
+                        onClick={() => selectItem(id)}>{label}
+                    </LiItem>
+        })
+    }
     render() {
         if(this.state.error) {
             return <ErrorMessage></ErrorMessage>
         }
-        if(!this.state.chars) {
+        if(!this.state.items) {
             return (
                 <Spinner></Spinner>
             )
         }
-        const {selectChar} = this.props;
-        const persons = this.state.chars.map(item => {
-            return <LiItem 
-                        key={item.id}
-                        onClick={() => selectChar(item.id)}>{item.name}</LiItem>
-        })
+        
+        
         return (
             <UlBlock >
-                {persons}
+                {this.renderItems()}
             </UlBlock>
         );
     }
