@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 // import './charDetails.css';
 import styled from 'styled-components';
-import GotService from '../../services/gotService';
 import Spinner from '../spinner';
 
 
@@ -38,83 +37,73 @@ const LiItem = styled.li`
 
 `;
 
-const Field = ({char, field, label}) => {
+const Field = ({item, loading, field, label}) => {
+    let released; // remove T00:00:00 from date released
+    field === 'released' ? released = String(item[field].match(/[0-9]*-[0-9]*-[0-9]*/ig)) : field === 'titles' ? (item[field].length > 1 ? released = item[field].join(', ') : released = item[field]) : released = item[field];
+     
+    const content = loading ? <Spinner></Spinner> : released; // want full date, instead of release put item[field]
     return (
         <LiItem >
             <span className="term">{label}</span>
-            <span>{char[field]}</span>
+            <span>{content}</span>
         </LiItem>
     )
 }
 
 export { Field };
 
-export default class CharDetails extends Component {
-    gotService = new GotService();
+export default class ItemDetails extends Component {
     state = {
-        char: null,
+        item: null,
         loading: false
     }
     componentDidMount() {
-        this.updateChar();
+        this.updateItem();
         
     }
     componentDidUpdate(prevProps) {
-        if(this.props.selectedChar !== prevProps.selectedChar) {
-            this.updateChar();
+        if(this.props.selectedItem !== prevProps.selectedItem) {
+            this.updateItem();
         }
     }
-    updateChar() {
-        const {selectedChar} = this.props;
-        if(!selectedChar) {
+    updateItem() {
+        const {selectedItem, getData} = this.props;
+        if(!selectedItem) {
             return
         }
         this.setState({loading: true});
-        this.gotService.getCharacter(selectedChar, this.state.loading)
-            .then((char) => this.setState({char}))
+        getData(selectedItem)
+            .then((item) => this.setState({item}))
             .then(() => this.setState({loading: false}))
     }
-    checkIfLoading(char, loading) {
+    checkIfLoading(item, loading) {
         if(loading) {
             return <Spinner></Spinner>
         }
-        return char;
+        return item;
     }
     render() {
-        if(!this.state.char) {
+        if(!this.state.item) {
             return (
                 <span style={{'color': '#fff'}}>You should choose a person</span>
             )
         }
-        
-        const {name} = this.state.char;
-        const {loading, char} = this.state;
+        const {name} = this.state.item;
+        const {loading, item} = this.state;
         return (
             
+            
             <DetailsBlock >
+                
                 <h4>{this.checkIfLoading(name, loading)}</h4>
                 <UlBlock className="list-group-flush">
                     {React.Children.map(this.props.children, (child) => {
-                        return React.cloneElement(child, {char})
+                        return React.cloneElement(child, {item, loading})
                     })}
-                    {/* <LiItem >
-                        <span className="term">Gender</span>
-                        <span>{this.checkIfLoading(gender, loading)}</span>
-                    </LiItem>
-                    <LiItem>
-                        <span className="term">Born</span>
-                        <span>{this.checkIfLoading(born, loading)}</span>
-                    </LiItem>
-                    <LiItem>
-                        <span className="term">Died</span>
-                        <span>{this.checkIfLoading(died, loading)}</span>
-                    </LiItem>
-                    <LiItem>
-                        <span className="term">Culture</span>
-                        <span>{this.checkIfLoading(culture, loading)}</span>
-                    </LiItem> */}
                 </UlBlock>
+                
             </DetailsBlock>
+            
         );
     }
 }

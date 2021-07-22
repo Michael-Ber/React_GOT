@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import {Link} from 'react-router-dom';
+import './header.css';
 
 const HeaderBlock = styled.div`
     display: flex;
@@ -12,6 +14,7 @@ const HeaderTitle = styled.h3`
     font-size: 24px;
     color: #fff;
     margin: 0;
+    
 `;
 
 const HeaderLinks = styled.ul`
@@ -23,9 +26,10 @@ const HeaderLinks = styled.ul`
     li {
         margin-right: 20px;
         font-size: 18px;
+        
     }
 `;
-const Link = styled.a`
+const LinkItem = styled(Link)`
     color: inherit;
     text-decoration: none;
     :visited {
@@ -50,19 +54,17 @@ const Header = () => {
     return (
         <HeaderBlock>
             <HeaderTitle>
-                <Link href="#">
-                Game of Thrones DB
-                </Link>
+                <LinkItem to="/">Game of Thrones DB</LinkItem>
             </HeaderTitle>
             <HeaderLinks>
                 <li>
-                    <Link href="#">Characters</Link>
+                    <LinkItem to="/characters">Characters</LinkItem>
                 </li>
                 <li>
-                    <Link href="#">Houses</Link>
+                    <LinkItem to="/houses">Houses</LinkItem>
                 </li>
                 <li>
-                    <Link href="#">Books</Link>   
+                    <LinkItem to="/books">Books</LinkItem>   
                 </li>
             </HeaderLinks>
         </HeaderBlock>
