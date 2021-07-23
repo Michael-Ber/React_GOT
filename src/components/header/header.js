@@ -58,13 +58,13 @@ const Header = () => {
             </HeaderTitle>
             <HeaderLinks>
                 <li>
-                    <LinkItem to="/characters">Characters</LinkItem>
+                    <LinkItem to="/characters/">Characters</LinkItem>
                 </li>
                 <li>
-                    <LinkItem to="/houses">Houses</LinkItem>
+                    <LinkItem to="/houses/">Houses</LinkItem>
                 </li>
                 <li>
-                    <LinkItem to="/books">Books</LinkItem>   
+                    <LinkItem to="/books/">Books</LinkItem>   
                 </li>
             </HeaderLinks>
         </HeaderBlock>

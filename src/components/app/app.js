@@ -3,9 +3,7 @@ import {Col, Row, Container} from 'reactstrap';
 import Header from '../header';
 import RandomChar from '../randomChar';
 import ErrorMessage from '../errorMessage';
-import CharacterPage from '../pages/characterPage';
-import BooksPage from '../pages/booksPage';
-import HousesPage from '../pages/housesPage';
+import {CharacterPage, HousesPage, BooksPage, BookItem} from '../pages';
 
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 
@@ -52,8 +50,12 @@ export default class App extends Component {
                             </Col>
                         </Row>
                         <Route path="/characters" component={CharacterPage}/>
-                        <Route path="/books" component={BooksPage}/>
                         <Route path="/houses" component={HousesPage}/>
+                        <Route path="/books" exact component={BooksPage}/>
+                        <Route path="/books/:id" render={({match}) => {
+                            const {id} = match.params;
+                            return <BookItem bookId={id}/>
+                        }}/>
                     </Container>
                 </div>
             </Router>

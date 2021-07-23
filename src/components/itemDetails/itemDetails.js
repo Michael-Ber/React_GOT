@@ -91,8 +91,6 @@ export default class ItemDetails extends Component {
         const {name} = this.state.item;
         const {loading, item} = this.state;
         return (
-            
-            
             <DetailsBlock >
                 
                 <h4>{this.checkIfLoading(name, loading)}</h4>
