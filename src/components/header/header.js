@@ -54,7 +54,7 @@ const Header = () => {
     return (
         <HeaderBlock>
             <HeaderTitle>
-                <LinkItem to="/">Game of Thrones DB</LinkItem>
+                <LinkItem to="/home/">Game of Thrones DB</LinkItem>
             </HeaderTitle>
             <HeaderLinks>
                 <li>
