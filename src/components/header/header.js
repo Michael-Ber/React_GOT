@@ -50,21 +50,22 @@ const LinkItem = styled(Link)`
     }
 `;
 
-const Header = () => {
+const Header = (props) => {
+    
     return (
         <HeaderBlock>
             <HeaderTitle>
-                <LinkItem to="/home/">Game of Thrones DB</LinkItem>
+                <LinkItem to="/" onClick={props.onChangeImg}>Game of Thrones DB</LinkItem>
             </HeaderTitle>
             <HeaderLinks>
                 <li>
-                    <LinkItem to="/characters/">Characters</LinkItem>
+                    <LinkItem to="/characters/" onClick={props.onChangeImg}>Characters</LinkItem>
                 </li>
                 <li>
-                    <LinkItem to="/houses/">Houses</LinkItem>
+                    <LinkItem to="/houses/" onClick={props.onChangeImg}>Houses</LinkItem>
                 </li>
                 <li>
-                    <LinkItem to="/books/">Books</LinkItem>   
+                    <LinkItem to="/books/" onClick={props.onChangeImg}>Books</LinkItem>   
                 </li>
             </HeaderLinks>
         </HeaderBlock>

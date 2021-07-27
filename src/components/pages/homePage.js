@@ -12,6 +12,9 @@ const HomeContainer = styled.div`
     justify-content: space-between;
     align-items: top;
     margin-top: 200px;
+    padding: 20px;
+    background-color: #848f9e;
+    border-radius: 5px;
 `;
 
 const HomeItem = styled.div`

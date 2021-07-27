@@ -16,8 +16,10 @@ export default class App extends Component {
     gotService = new GotService();
     state = {
         randCharVis: true,
-        error: false
+        error: false,
+        pageNotFound: false
     }
+    
     componentDidCatch() {
         this.setState({error: true})
     }
@@ -28,55 +30,52 @@ export default class App extends Component {
             }
         }) 
     }
+    onChangeImg = () => {
+        this.setState((state) => {
+            return {
+                pageNotFound: !state.pageNotFound
+            }
+        })
+    }
     
     render() {
         if(this.state.error) {
             return <ErrorMessage></ErrorMessage>
         }
         const randomChar = this.state.randCharVis ? <RandomChar></RandomChar>: null;
+        const randomCharComponent = 
+            <Row>
+                <Col lg={{size: 5, offset: 0}}>
+                    {randomChar}
+                    <button 
+                        className={'toggle__button'}
+                        onClick={this.onClick}>Toggle random character</button>
+                </Col>
+            </Row>;
+        const imgOnMainScreen = this.state.pageNotFound ? 'appNotFound' : 'app';
+
         return (
             <Router>
-                
-                <div className="app"> 
-                    
-                    <Switch>
-                        <Route path="/home/" exact>
-                            <Container>
+                <div className = {imgOnMainScreen}> 
+                    <Container>
+                        <Switch>
+                            <Route path="/characters" exact><Header />{randomCharComponent}<CharacterPage/></Route>
+                            <Route path="/houses" exact><Header />{randomCharComponent}<HousesPage/></Route>
+                            <Route path="/books" exact><Header />{randomCharComponent}<BooksPage/></Route>
+                            <Route path="/books/:id" exact render={({match}) => {
+                                const {id} = match.params;
+                                return (<><Header />{randomCharComponent}<BookItem bookId={id}/></>)
+                            }}/>
+                            <Route path="/" exact>
                                 <Header />
                                 <HomePage/>
-                            </Container>
-                        </Route>
-                        <Route path="/">
-                            <Container>
-                                <Header />
-                            </Container>
-                            <Container>
-                                    <Row>
-                                        <Col lg={{size: 5, offset: 0}}>
-                                            {randomChar}
-                                            <button 
-                                                className={'toggle__button'}
-                                                onClick={this.onClick}>Toggle random character</button>
-                                        </Col>
-                                    </Row>
-                                    <Route path="/characters" component={CharacterPage}/>
-                                    <Route path="/houses" component={HousesPage}/>
-                                    <Route path="/books" exact component={BooksPage}/>
-                                    <Route path="/books/:id" render={({match}) => {
-                                        const {id} = match.params;
-                                        return <BookItem bookId={id}/>
-                                    }}/>
-                                    <Route path="/" render={({match}) => {
-                                        if(!match) {
-                                            return <NotFound>hjfghf</NotFound>
-                                        }
-                                    }}/>
-                                
-                                
-                            </Container>
-                        </Route>
-
-                    </Switch>
+                            </Route>
+                            <Route exact> 
+                                <Header onChangeImg={this.onChangeImg}/>
+                                <NotFound onChangeImg={this.onChangeImg}/>
+                            </Route>
+                        </Switch>
+                    </Container>
                     
                 </div>
             </Router>
