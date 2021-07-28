@@ -5,6 +5,7 @@ import '../../services/gotService';
 import GotService from '../../services/gotService';
 import Spinner from '../spinner';
 import ErrorMessage from '../errorMessage';
+import PropTypes from 'prop-types';
 
 const UlBlock = styled.ul`
     display: flex;
@@ -27,7 +28,12 @@ const LiItem = styled.li`
 `;
 export default class ItemList extends Component {
     gotService = new GotService();
-
+    static defaultProps = {
+        selectItem: () => {}
+    }
+    static propTypes = {
+        selectItem: PropTypes.func
+    }
     state = {
         items: null, 
         error: false
