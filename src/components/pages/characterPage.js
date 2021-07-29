@@ -1,5 +1,5 @@
 import React from 'react';
-import ItemList from '../itemList';
+import {ItemListChars} from '../itemList';
 import ItemDetails, {Field} from '../itemDetails';
 import ErrorMessage from '../errorMessage';
 import GotService from '../../services/gotService';
@@ -27,9 +27,8 @@ export default class CharacterPage extends React.Component {
             return <ErrorMessage></ErrorMessage>
         }
         const itemList = (
-            <ItemList 
+            <ItemListChars 
                 selectItem={this.selectChar}
-                getData={this.gotService.getAllCharacters}
                 renderItem={({name, gender}) => `${name} (${gender})`}/>
         );
         const itemDetails = (

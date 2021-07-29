@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-// import './itemList.css';
 import styled from 'styled-components';
 import '../../services/gotService';
-import GotService from '../../services/gotService';
-import Spinner from '../spinner';
-import ErrorMessage from '../errorMessage';
+// import GotService from '../../services/gotService';
+// import withData from '../withData';
+// import Spinner from '../spinner';
+// import ErrorMessage from '../errorMessage';
 import PropTypes from 'prop-types';
 
 const UlBlock = styled.ul`
@@ -27,32 +27,16 @@ const LiItem = styled.li`
     }
 `;
 export default class ItemList extends Component {
-    gotService = new GotService();
     static defaultProps = {
         selectItem: () => {}
     }
     static propTypes = {
         selectItem: PropTypes.func
     }
-    state = {
-        items: null, 
-        error: false
-    };
-    
-    componentDidMount() {
-        const {getData} = this.props;
-        getData()
-            .then((items) => {
-                return this.setState({items})
-            })
-    }
-    componentDidCatch() {
-        this.setState({error: true})
-    }
     renderItems() {
-        const {items} = this.state;
+        const {data} = this.props;
         const {selectItem} = this.props;
-        return items.map(item => {
+        return data.map(item => {
             const {id} = item;
             const label = this.props.renderItem(item);
             return <LiItem 
@@ -62,16 +46,6 @@ export default class ItemList extends Component {
         })
     }
     render() {
-        if(this.state.error) {
-            return <ErrorMessage></ErrorMessage>
-        }
-        if(!this.state.items) {
-            return (
-                <Spinner></Spinner>
-            )
-        }
-        
-        
         return (
             <UlBlock >
                 {this.renderItems()}
@@ -79,3 +53,35 @@ export default class ItemList extends Component {
         );
     }
 }
+
+// const withData = (View, getData) => {
+//     return class extends Component {
+//         state = {
+//             data: null, 
+//             error: false
+//         };
+        
+//         componentDidMount() {
+//             getData()
+//                 .then((data) => {
+//                     return this.setState({data})
+//                 })
+//         }
+//         componentDidCatch() {
+//             this.setState({error: true})
+//         }
+//         render() {
+//             if(this.state.error) {
+//                 return <ErrorMessage></ErrorMessage>
+//             }
+//             if(!this.state.data) {
+//                 return (
+//                     <Spinner></Spinner>
+//                 )
+//             }
+//             return <View {...this.props} data={this.state.data}/>
+//         }
+//     }
+// }
+// const {getAllCharacters} = new GotService();
+// export default withData(ItemList, getAllCharacters);

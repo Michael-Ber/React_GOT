@@ -1,5 +1,5 @@
 import React from 'react';
-import ItemList from '../itemList';
+import {ItemListHouses} from '../itemList';
 import ItemDetails, {Field} from '../itemDetails';
 import ErrorMessage from '../errorMessage';
 import GotService from '../../services/gotService';
@@ -27,9 +27,8 @@ export default class HousesPage extends React.Component {
             return <ErrorMessage></ErrorMessage>
         }
         const itemList = (
-            <ItemList 
+            <ItemListHouses 
                 selectItem={this.selectHouse}
-                getData={this.gotService.getAllHouses}
                 renderItem={({name}) => name}/>
         );
         const itemDetails = (

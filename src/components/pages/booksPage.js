@@ -1,5 +1,5 @@
 import React from 'react';
-import ItemList from '../itemList';
+import {ItemListBooks} from '../itemList';
 import ErrorMessage from '../errorMessage';
 import GotService from '../../services/gotService';
 import {withRouter} from 'react-router-dom';
@@ -20,11 +20,10 @@ class BooksPage extends React.Component {
         }
         
         return (
-            <ItemList 
+            <ItemListBooks 
                 selectItem={(itemId) => {
                     this.props.history.push(itemId)
                 }}
-                getData={this.gotService.getAllBooks}
                 renderItem={({name}) => name}/>
         )
     }
