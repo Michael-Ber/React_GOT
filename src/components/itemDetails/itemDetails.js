@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect} from 'react';
 // import './charDetails.css';
 import styled from 'styled-components';
 import Spinner from '../spinner';
@@ -37,11 +37,68 @@ const LiItem = styled.li`
 
 `;
 
+
+
+function ItemDetails ({selectedItem, getData, children}) {
+    
+    const [item, refreshData] = useState(null);
+    const [loadingState, updateLoading] = useState([false]);
+    
+    useEffect (() => {
+        console.log(selectedItem);
+        updateItem(selectedItem);
+        return () => {
+            updateItem(selectedItem);
+        }
+    }, []);
+
+    function updateItem(selectedItem) {
+        console.log(selectedItem);
+        if(!selectedItem) {
+            return
+        }
+        updateLoading(loadingState => loadingState=true);
+        getData(selectedItem)
+            .then(item => refreshData(item))
+            .then(updateLoading(loadingState => loadingState=false))
+            
+    }
+    function checkIfLoading(item, loadingState) {
+        if(loadingState) {
+            return <Spinner></Spinner>
+        }
+        return item;
+    }
+    console.log(item);
+    if(!item) {
+        return (
+            <span style={{'color': '#fff'}}>You should choose a person</span>
+        )
+    }
+    
+    return (
+        <DetailsBlock >
+            
+            <h4>{checkIfLoading(item.name, loadingState)}</h4>
+            <UlBlock className="list-group-flush">
+                {React.Children.map(children, (child) => {
+                    return React.cloneElement(child, {item, loadingState})
+                })}
+            </UlBlock>
+            
+        </DetailsBlock>
+        
+    );
+    
+}
+export default ItemDetails;
+
 const Field = ({item, loading, field, label}) => {
     let released; // remove T00:00:00 from date released
     field === 'released' ? released = String(item[field].match(/[0-9]*-[0-9]*-[0-9]*/ig)) : field === 'titles' ? (item[field].length > 1 ? released = item[field].join(', ') : released = item[field]) : released = item[field];
      
     const content = loading ? <Spinner></Spinner> : released; // want full date, instead of release put item[field]
+    console.log(item);
     return (
         <LiItem >
             <span className="term">{label}</span>
@@ -51,57 +108,3 @@ const Field = ({item, loading, field, label}) => {
 }
 
 export { Field };
-
-export default class ItemDetails extends Component {
-    state = {
-        item: null,
-        loading: false
-    }
-    componentDidMount() {
-        this.updateItem();
-        
-    }
-    componentDidUpdate(prevProps) {
-        if(this.props.selectedItem !== prevProps.selectedItem) {
-            this.updateItem();
-        }
-    }
-    updateItem() {
-        const {selectedItem, getData} = this.props;
-        if(!selectedItem) {
-            return
-        }
-        this.setState({loading: true});
-        getData(selectedItem)
-            .then((item) => this.setState({item}))
-            .then(() => this.setState({loading: false}))
-    }
-    checkIfLoading(item, loading) {
-        if(loading) {
-            return <Spinner></Spinner>
-        }
-        return item;
-    }
-    render() {
-        if(!this.state.item) {
-            return (
-                <span style={{'color': '#fff'}}>You should choose a person</span>
-            )
-        }
-        const {name} = this.state.item;
-        const {loading, item} = this.state;
-        return (
-            <DetailsBlock >
-                
-                <h4>{this.checkIfLoading(name, loading)}</h4>
-                <UlBlock className="list-group-flush">
-                    {React.Children.map(this.props.children, (child) => {
-                        return React.cloneElement(child, {item, loading})
-                    })}
-                </UlBlock>
-                
-            </DetailsBlock>
-            
-        );
-    }
-}

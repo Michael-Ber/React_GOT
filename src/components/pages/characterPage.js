@@ -31,6 +31,7 @@ export default class CharacterPage extends React.Component {
                 selectItem={this.selectChar}
                 renderItem={({name, gender}) => `${name} (${gender})`}/>
         );
+        console.log(this.state.charSelected);
         const itemDetails = (
             <ItemDetails 
                 selectedItem={this.state.charSelected}
