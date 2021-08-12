@@ -36,49 +36,55 @@ const LiItem = styled.li`
     }
 
 `;
-
-
+const Field = ({item, loadingState, field, label}) => {
+    let released; // remove T00:00:00 from date released
+    field === 'released' ? released = String(item[field].match(/[0-9]*-[0-9]*-[0-9]*/ig)) : field === 'titles' ? (item[field].length > 1 ? released = item[field].join(', ') : released = item[field]) : released = item[field];
+    console.log(loadingState);
+    const content = loadingState ? <Spinner></Spinner> : released; // want full date, instead of release put item[field]
+    return (
+        <LiItem >
+            <span className="term">{label}</span>
+            <span>{content}</span>
+        </LiItem>
+    )
+}
+export { Field };
 
 function ItemDetails ({selectedItem, getData, children}) {
     
     const [item, refreshData] = useState(null);
-    const [loadingState, updateLoading] = useState([false]);
-    
+    let [loadingState, updateLoading] = useState(false);
+
     useEffect (() => {
-        console.log(selectedItem);
         updateItem(selectedItem);
-        return () => {
-            updateItem(selectedItem);
-        }
-    }, []);
+    }, [selectedItem]);
 
     function updateItem(selectedItem) {
-        console.log(selectedItem);
         if(!selectedItem) {
             return
         }
-        updateLoading(loadingState => loadingState=true);
+        updateLoading(loadingState=true);
         getData(selectedItem)
             .then(item => refreshData(item))
-            .then(updateLoading(loadingState => loadingState=false))
+            .then(loadingState => updateLoading(loadingState=false))
             
     }
-    function checkIfLoading(item, loadingState) {
+    const checkIfLoading = (item, loadingState) => {
         if(loadingState) {
             return <Spinner></Spinner>
         }
         return item;
     }
-    console.log(item);
+    
     if(!item) {
         return (
-            <span style={{'color': '#fff'}}>You should choose a person</span>
+            <span style={{'color': '#fff'}}>You should choose an item</span>
         )
+        
     }
     
     return (
         <DetailsBlock >
-            
             <h4>{checkIfLoading(item.name, loadingState)}</h4>
             <UlBlock className="list-group-flush">
                 {React.Children.map(children, (child) => {
@@ -93,18 +99,5 @@ function ItemDetails ({selectedItem, getData, children}) {
 }
 export default ItemDetails;
 
-const Field = ({item, loading, field, label}) => {
-    let released; // remove T00:00:00 from date released
-    field === 'released' ? released = String(item[field].match(/[0-9]*-[0-9]*-[0-9]*/ig)) : field === 'titles' ? (item[field].length > 1 ? released = item[field].join(', ') : released = item[field]) : released = item[field];
-     
-    const content = loading ? <Spinner></Spinner> : released; // want full date, instead of release put item[field]
-    console.log(item);
-    return (
-        <LiItem >
-            <span className="term">{label}</span>
-            <span>{content}</span>
-        </LiItem>
-    )
-}
 
-export { Field };
+

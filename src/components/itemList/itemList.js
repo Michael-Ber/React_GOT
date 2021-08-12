@@ -26,14 +26,12 @@ const LiItem = styled.li`
         border-top-right-radius: 0.25rem;
     }
 `;
-function ItemList(props) {
+function ItemList({data, selectItem, renderItem}) {
     
     function renderItems() {
-        const {data} = props;
-        const {selectItem} = props;
         return data.map(item => {
             const {id} = item;
-            const label = props.renderItem(item);
+            const label = renderItem(item);
             return <LiItem 
                         key={id}
                         onClick={() => selectItem(id)}>{label}
