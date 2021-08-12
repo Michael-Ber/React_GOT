@@ -42,7 +42,7 @@ export default class App extends Component {
         if(this.state.error) {
             return <ErrorMessage></ErrorMessage>
         }
-        const randomChar = this.state.randCharVis ? <RandomChar interval={15000}></RandomChar>: null;
+        const randomChar = this.state.randCharVis ? <RandomChar interval = {15000}></RandomChar>: null;
         const randomCharComponent = 
             <Row>
                 <Col lg={{size: 5, offset: 0}}>

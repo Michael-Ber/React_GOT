@@ -39,7 +39,6 @@ const LiItem = styled.li`
 const Field = ({item, loadingState, field, label}) => {
     let released; // remove T00:00:00 from date released
     field === 'released' ? released = String(item[field].match(/[0-9]*-[0-9]*-[0-9]*/ig)) : field === 'titles' ? (item[field].length > 1 ? released = item[field].join(', ') : released = item[field]) : released = item[field];
-    console.log(loadingState);
     const content = loadingState ? <Spinner></Spinner> : released; // want full date, instead of release put item[field]
     return (
         <LiItem >

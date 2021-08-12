@@ -1,10 +1,9 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect} from 'react';
 // import './randomChar.css';
 import styled from 'styled-components';
 import GotService from '../../services/gotService';
 import Spinner from '../spinner';
 import ErrorMessage from '../errorMessage';
-import PropTypes from 'prop-types';
 
 const RandomBlock = styled.div`
     background-color: #fff;
@@ -47,31 +46,32 @@ const LiItem = styled.li`
     }
 
 `;
-export default class RandomChar extends Component {
+function RandomChar({interval = 3000}) {
+    const gotService = new GotService();
+    const [char, setChar] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
-    gotService = new GotService();
-    state = {
-        char: {},
-        loading: true,
-        error: false
-    };
-    componentDidMount() {
-        this.updateChar();
-        this.timerId = setInterval(this.updateChar, this.props.interval);
+    useEffect(() => {
+        updateChar();
+        let timerId = setInterval(updateChar, interval);
+        return () => {
+            clearInterval(timerId);
+        }
+    }, [])
+
+    const onCharLoaded = (char) => {
+        setChar(char);
+        setLoading(loading => loading=false)
     }
-    componentWillUnmount() {
-        clearInterval(this.timerId);
-    }
-    onCharLoaded = (char) => {
-        this.setState({char, loading: false});
-    }
-    updateChar = () => {
+
+    const updateChar = () => {
         const id = Math.floor(Math.random()*140 + 25);
-        this.gotService.getCharacter(id)
-            .then(this.onCharLoaded)
-            .catch(this.errorMessage)
+        gotService.getCharacter(id)
+            .then(onCharLoaded)
+            .catch(errorMessage)
     }
-    checkIfEmpty(prop, loading) {
+    function checkIfEmpty(prop, loading) {
         if(loading) {
             return <Spinner></Spinner>
         }
@@ -80,34 +80,27 @@ export default class RandomChar extends Component {
         }
         return prop;
     }
-    errorMessage = (error) => {
-        this.setState({
-            loading: false,
-            error: true
-        })
+    const errorMessage = (error) => {
+        setLoading(loading => loading=false)
+        setError(error => error=true)
     }
-    render() {
-        const {char, loading, error} = this.state;
+    
 
-        const errorMessage = error ? <ErrorMessage></ErrorMessage>: null;
-        const content = !(error) ? <View char={char}
-        loading={loading}
-        checkIfEmpty={this.checkIfEmpty}></View> : null;
-        return (
-            <RandomBlock>
-                {errorMessage}
-                {content}
-            </RandomBlock>
-        );
-    }
+    const errorMsg = error ? <ErrorMessage></ErrorMessage>: null;
+    const content = !(error) ? <View char={char}
+                                    loading={loading}
+                                    checkIfEmpty={checkIfEmpty}>
+                                </View> : null;
+    return (
+        <RandomBlock>
+            {errorMsg}
+            {content}
+        </RandomBlock>
+    );
+    
 }
 
-RandomChar.defaultProps = {
-    interval: 15000
-}
-RandomChar.propTypes = {
-    interval: PropTypes.number
-}
+export default RandomChar;
 
 const View = ({char, loading, checkIfEmpty}) => {
     const {name, gender, born, died, culture} = char;
